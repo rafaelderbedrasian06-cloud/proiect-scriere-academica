@@ -17,7 +17,8 @@ ALGORITHMS = [
 ]
 
 MERGE_LIMIT = 1000000
-TIMEOUT = 90  
+TIMEOUT = 90
+
 
 def run_with_timeout(func, arr, timeout):
     result = {"elapsed": None, "done": False}
@@ -34,25 +35,39 @@ def run_with_timeout(func, arr, timeout):
     return result["elapsed"] if result["done"] else None
 
 
+def save_rezultate(results):           
+    with open("rezultate.txt", "w") as f:
+        for name, res in results.items():
+            f.write(f"---- {name} ----\n")      
+            for n in SIZES:
+                t = res.get(n)
+                if t is None:
+                    f.write(f"Nr = {n:,} -> SKIP\n")          
+                else:
+                    f.write(f"Nr = {n:,} -> {t:.6f} sec\n")   
+            f.write("\n")                                      
+    print("✓ Rezultate salvate in: rezultate.txt")
+
+
 def main():
     results = {}
 
     for name, func in ALGORITHMS:
         timed_out = False
-        results[name] = []
+        results[name] = {}
         print(f"[{name}]")
-        print(f"  {'N (elemente)':<20}{'Timp (secunde)':<20}")
+        print(f"  {'Nr (elemente)':<20}{'Timp (secunde)':<20}")
         print("  " + "-" * 42)
 
         for n in SIZES:
             if n > MERGE_LIMIT and name == "Merge Sort":
                 print(f"  {n:<20}{'LIMITA RECURSIVITATE (skip)':<20}")
-                results[name].append(None)
+                results[name][n] = None
                 continue
 
             if timed_out:
                 print(f"  {n:<20}{'PREA LENT (skip)':<20}")
-                results[name].append(None)
+                results[name][n] = None
                 continue
 
             arr = generate_random(n)
@@ -61,37 +76,35 @@ def main():
             if elapsed is None:
                 print(f"  {n:<20}{'PREA LENT (>90s, skip)':<20}")
                 timed_out = True
-                results[name].append(None)
+                results[name][n] = None
             else:
                 print(f"  {n:<20}{elapsed:.6f} s")
-                results[name].append(elapsed)
+                results[name][n] = elapsed
 
         print()
 
     print("=" * 62)
     print("Experiment finalizat.")
 
-   
     print("\n" + "=" * 62)
     print("REZUMAT FINAL (toti algoritmii)")
     print("=" * 62)
-
-    
     print(f"{'Algoritm':<20}", end="")
     for n in SIZES:
         print(f"{str(n):<12}", end="")
     print()
     print("-" * (20 + 12 * len(SIZES)))
-
-    
-    for name in results:
+    for name, res in results.items():
         print(f"{name:<20}", end="")
-        for t in results[name]:
+        for n in SIZES:
+            t = res.get(n)
             if t is None:
                 print(f"{'X':<12}", end="")
             else:
                 print(f"{t:.4f}".ljust(12), end="")
         print()
+
+    save_rezultate(results)            # Generam rezultate.txt la final
 
 
 if __name__ == "__main__":
