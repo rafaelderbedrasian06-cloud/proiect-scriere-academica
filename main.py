@@ -37,11 +37,6 @@ def run_with_timeout(func, arr, timeout):
 def main():
     results = {}
 
-    print("=" * 62)
-    print("   COMPARATIE EXPERIMENTALA A METODELOR DE SORTARE (Python)")
-    print("=" * 62)
-    print()
-
     for name, func in ALGORITHMS:
         timed_out = False
         results[name] = []
