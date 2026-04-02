@@ -7,7 +7,7 @@ def bubble_sort(arr):
             if arr[j] > arr[j + 1]:
                 arr[j], arr[j + 1] = arr[j + 1], arr[j]
                 swapped = True
-        # Daca nu s-a facut niciun swap, lista e deja sortata
+
         if not swapped:
             break
     return arr
